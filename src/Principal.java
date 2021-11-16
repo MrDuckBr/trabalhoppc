@@ -7,8 +7,8 @@ public class Principal {
         capacidade = Integer.parseInt(args[2]);
         rodadas = Integer.parseInt(args[3]);
 
-       // Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes,garcons, capacidade);
-        //estabelecimento.comecar();
+        Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes,garcons, capacidade);
+        estabelecimento.comecar();
 
 
     }

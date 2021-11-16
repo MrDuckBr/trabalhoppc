@@ -1,4 +1,4 @@
-public class Garcom extends Thread {
+public class Garcom {
 
     float tempoOcupado;
     int id,capacidade, nmrPedidos;
