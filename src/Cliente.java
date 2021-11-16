@@ -11,24 +11,29 @@ public class Cliente {
         this.tempo = tempo;
     }
 
-    public void fazPedido(){
+    public boolean fazPedido(){
         if(!fezPedido){
-            //liberado para fazer o pedido
+            Random  random = new Random();
+            int pedido = random.nextInt(5);
+            if(pedido <= 3) return  true;
         }
+        return false;
     }
 
     public  void esperaPedido()
     {
         //gera tempo aleatorio
-        semaforo
+        //semaforo esperando o cliente
     }
 
     public void recebePedido(){
+
         tempo = consomePedido();
     }
+
+
     public float consomePedido(){ // IMplementar
-        Random random = new Random(int);
-        return ;
+        return 0;
 
     }
 }
