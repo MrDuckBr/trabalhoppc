@@ -1,18 +1,33 @@
 import java.util.Random;
 
-public class Cliente {
+public class Cliente extends Thread{
 
     int id;
-    float tempo;
-    boolean fezPedido;
+    long tempo;
+    boolean fazPedido;
+    Estabelecimento estabelecimento;
 
-    public Cliente(int id, float tempo){
+    public Cliente(int id, long tempo, Estabelecimento e){
         this.id = id;
         this.tempo = tempo;
+        fazPedido = false;
+        this.estabelecimento = e;
+    }
+
+    public void run(){
+        try {
+            if(fazPedido()){
+                esperaPedido();
+                 recebePedido();
+                consomePedido();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean fazPedido(){
-        if(!fezPedido){
+        if(!getFazPedido()){
             Random  random = new Random();
             int pedido = random.nextInt(5);
             if(pedido <= 3) return  true;
@@ -20,20 +35,33 @@ public class Cliente {
         return false;
     }
 
-    public  void esperaPedido()
-    {
-        //gera tempo aleatorio
-        //semaforo esperando o cliente
+    public  void esperaPedido() throws InterruptedException {
+        estabelecimento.esperaGarcom(this);
+        fazPedido = true;
+    }
+    public  void setEsperaPedido(int valor){
+        this.tempo = valor;
+    }
+
+    public synchronized boolean getFazPedido(){
+        return  fazPedido;
     }
 
     public void recebePedido(){
-
-        tempo = consomePedido();
+        Random random = new Random();
+        tempo = random.nextInt(3000);        //Verificar se o mesmo está indo na copia ou no endereço
     }
 
 
-    public float consomePedido(){ // IMplementar
-        return 0;
+    public void consomePedido() throws InterruptedException { // IMplementar
+        this.wait(tempo);
+        reset();
 
+
+    }
+
+    public void reset(){
+        tempo = 0;
+        fazPedido = false;
     }
 }
