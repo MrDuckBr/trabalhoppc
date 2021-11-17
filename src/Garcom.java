@@ -39,7 +39,8 @@ public class Garcom extends Thread {
                     }
             }
             if(!verificaDisponibilidadePedidos() || estabelecimento.verificaClientesQueFaraoPedidos() == null){
-                //Ir pra cozinha
+                System.out.println("Passei aqui meu consagra");
+                estabelecimento.liberaoamigao();
 
             }
         }catch (InterruptedException e){

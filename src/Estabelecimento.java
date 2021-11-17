@@ -9,6 +9,7 @@ public class Estabelecimento {
     ArrayList<Garcom> lstGarcons;
     //--TMP------
     Cliente cliente1;
+    Cliente cliente2;
     Garcom garcom;
     //--------------------
     Semaphore semaforo;
@@ -18,7 +19,7 @@ public class Estabelecimento {
         this.garcons = garcons;
         this.rodadasTotais = rodadas;
         this.capacidade = capacidade;
-        this.semaforo = new Semaphore(capacidade);
+        this.semaforo = new Semaphore(1);
 
         lstClientes = new ArrayList<>();
         lstGarcons = new ArrayList<>();
@@ -27,7 +28,9 @@ public class Estabelecimento {
     public void comecar(){
         System.out.println("Começou o atendimento de rodadas free");
          cliente1 = new Cliente(1,100, this);
+         cliente2 = new Cliente(1,100, this);
          lstClientes.add(cliente1);
+         lstClientes.add(cliente2);
          garcom = new Garcom(1,0,1, this);
 
          if(rodadas <= rodadasTotais) aberto();
@@ -36,6 +39,7 @@ public class Estabelecimento {
 
     public void aberto(){
             cliente1.start(); // Todos os clientes
+            cliente2.start(); // Todos os clientes
             garcom.start();
 
             novaRodada();
@@ -81,6 +85,14 @@ public class Estabelecimento {
 
     public void esperaGarcom(Cliente c) throws InterruptedException {
         semaforo.acquire();
+    }
+
+    public void esperaaiAmigao(long tempo) throws InterruptedException {
+        this.wait(tempo);
+    }
+
+    public void liberaoamigao(){
+        semaforo.release();
     }
 
 

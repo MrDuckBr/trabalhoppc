@@ -27,6 +27,7 @@ public class Cliente extends Thread{
     }
 
     public boolean fazPedido(){
+        System.out.println("Manda um pingadão ai meu consagrado");
         if(!getFazPedido()){
             Random  random = new Random();
             int pedido = random.nextInt(5);
@@ -37,6 +38,7 @@ public class Cliente extends Thread{
 
     public  void esperaPedido() throws InterruptedException {
         estabelecimento.esperaGarcom(this);
+        System.out.println("Porra desse jeito a cerva vai chegar quente");
         fazPedido = true;
     }
     public  void setEsperaPedido(int valor){
@@ -48,13 +50,16 @@ public class Cliente extends Thread{
     }
 
     public void recebePedido(){
+        System.out.println("Carai foi fazer a cerva ?");
         Random random = new Random();
         tempo = random.nextInt(3000);        //Verificar se o mesmo está indo na copia ou no endereço
     }
 
 
     public void consomePedido() throws InterruptedException { // IMplementar
-        this.wait(tempo);
+        System.out.println("Vamo pedir mais uma então, se paga");
+        //5this.wait(tempo);
+        //estabelecimento.esperaaiAmigao(tempo);
         reset();
 
 
