@@ -1,33 +1,39 @@
 import java.util.Random;
 
-public class Cliente extends Thread{
+public class Cliente implements Runnable{
 
     int id;
     long tempo;
     boolean fazPedido;
     Estabelecimento estabelecimento;
+    Thread t;
 
-    public Cliente(int id, long tempo, Estabelecimento e){
+    public Cliente(int id, Estabelecimento e) throws InterruptedException {
         this.id = id;
-        this.tempo = tempo;
         fazPedido = false;
         this.estabelecimento = e;
+        t = new Thread(this);
+        t.start();
+
+
     }
 
+    @Override
     public void run(){
-        try {
-            if(fazPedido()){
-                esperaPedido();
-                 recebePedido();
-                consomePedido();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (estabelecimento){
+        System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+
+        if(fazPedido()){
+            System.out.println("Cliente #"+Thread.currentThread().getId() +" irá pedir");
+
         }
+    }}
+    public  void esperar() throws InterruptedException {
+        t.wait();
     }
 
     public boolean fazPedido(){
-        System.out.println("Manda um pingadão ai meu consagrado");
+
         if(!getFazPedido()){
             Random  random = new Random();
             int pedido = random.nextInt(5);
@@ -69,4 +75,8 @@ public class Cliente extends Thread{
         tempo = 0;
         fazPedido = false;
     }
+
+
+
+
 }

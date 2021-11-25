@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class Estabelecimento {
@@ -6,12 +7,10 @@ public class Estabelecimento {
     int rodadasTotais,rodadas, clientes, garcons, capacidade;
 
     ArrayList<Cliente> lstClientes;
+    ArrayList<Thread> lstThreadsClientes;
     ArrayList<Garcom> lstGarcons;
-    //--TMP------
-    Cliente cliente1;
-    Cliente cliente2;
-    Garcom garcom;
-    //--------------------
+   // ArrayList<Cliente> lstClientesPedirao = new ArrayList<>();
+
     Semaphore semaforo;
 
     public Estabelecimento(int rodadas, int clientes, int garcons, int capacidade){
@@ -22,31 +21,55 @@ public class Estabelecimento {
         this.semaforo = new Semaphore(1);
 
         lstClientes = new ArrayList<>();
+
         lstGarcons = new ArrayList<>();
+
+
     }
-//https://www.javatpoint.com/how-to-create-a-thread-in-java
-    public void comecar(){
+
+    public void comecar() throws InterruptedException {
         System.out.println("Começou o atendimento de rodadas free");
-         cliente1 = new Cliente(1,100, this);
-         cliente2 = new Cliente(1,100, this);
-         lstClientes.add(cliente1);
-         lstClientes.add(cliente2);
-         garcom = new Garcom(1,0,1, this);
 
-         if(rodadas <= rodadasTotais) aberto();
+
+        for (int i = 0; i< clientes; ++i){
+            Cliente cliente = new Cliente(i,this);
+            lstClientes.add(cliente);
+        }
+
+        if(rodadas <= rodadasTotais) aberto();
     }
 
 
-    public void aberto(){
-            cliente1.start(); // Todos os clientes
-            cliente2.start(); // Todos os clientes
-            garcom.start();
+    public void aberto() throws InterruptedException {
+          //VerificaClientesQueIraoPedir();
+        lstClientes.get(0).
 
             novaRodada();
         }
+/*
+    public  void VerificaClientesQueIraoPedir() throws InterruptedException {
+        for (Cliente c : lstClientes) {
+            if(!c.getFazPedido()) {
+                System.out.println(Thread.currentThread());
+                c.esperar();
+            }else{
+                lstClientesPedirao.add(c);
+            }
+        }
+    }
 
+    public void atenderClientesQueIraoPedir() throws InterruptedException {
+        for (Cliente c: lstClientesPedirao) {
+            for (Garcom g: lstGarcons) {
+                if(g.getDisponivel()){
+                    g.addClienteLista(c);
+                    c.wait();
+                }
+            }
+        }
 
-
+    }
+*/
 
     public void novaRodada(){
         rodadas += 1;
@@ -98,9 +121,16 @@ public class Estabelecimento {
 
 
 
+
+
 }
 
-
+/*
+* esperaPedido();
+                 recebePedido();
+                consomePedido();
+*
+* */
 
 
 
