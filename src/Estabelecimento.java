@@ -24,6 +24,7 @@ public class Estabelecimento {
 
         lstClientesFezPedido = new ArrayList<>();
         lstGarcons = new ArrayList<>();
+
     }
 
     public synchronized boolean acabouRodadas() {
@@ -57,7 +58,7 @@ public class Estabelecimento {
         }
         if(clientesFinalizaram == clientes){
             clientesFinalizaram = 0;
-            rodadas +=1;
+
             lstClientesFezPedido.clear();
 
             for (Garcom g:lstGarcons) {
@@ -68,11 +69,16 @@ public class Estabelecimento {
                 c.setRecebeuPedido(false);
                 c.setFinalizouPedido(false);
             }
-            System.out.println("Comecou a rodada numero "+ rodadas );
+
+//            if(lstClientes.get(0).getId() == 0) {
+//                rodadas += 1;
+//                System.out.println("Nova Rodada Iniciada, rodada de Numero: " + rodadas);
+//            }
+
             notifyAll();
 
-
         }
+
 
     }
 
