@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class Estabelecimento {
@@ -21,9 +20,9 @@ public class Estabelecimento {
         clientesAtendidos = 0;
 
         lstClientes = new ArrayList<>();
+
         lstClientesFezPedido = new ArrayList<>();
         lstGarcons = new ArrayList<>();
-
     }
 
     public synchronized boolean acabouRodadas() {
@@ -57,7 +56,6 @@ public class Estabelecimento {
             wait();
         }
         notify();
-
     }
 
     public synchronized void alterar() throws InterruptedException {
@@ -79,20 +77,24 @@ public class Estabelecimento {
     }
 
     public synchronized void registraPedido(Cliente cliente) throws InterruptedException {
-        semaforo.acquire();
         lstClientes.get(cliente.getId()).calculaTempo();
-        System.out.println("O tempo" + lstClientes.get(cliente.getId()).getTempo());
+        System.out.println("O tempo " + lstClientes.get(cliente.getId()).getTempo());
+    }
 
+    public void recebeListPedidos(ArrayList<Cliente> lstPedidos) {
+        System.out.println("Recebeu a lista de pedidos");
+        for (Cliente cliente : lstPedidos) {
+            cliente.setRecebeuPedido(true);
+        }
     }
 
     public synchronized void verificaPedido(int id) throws InterruptedException {
-        for (Cliente c: lstClientesFezPedido) {
-            if(lstClientes.get(id).getId() == c.getId()){
+        for (Cliente c : lstClientesFezPedido) {
+            if (lstClientes.get(id).getId() == c.getId()) {
                 Cliente cli = lstClientes.get(id);
                 cli.setRecebeuPedido(c.getRecebeuPedido());
                 cli.calculaTempo();
                 wait(cli.getTempo());
-
 
             }
         }

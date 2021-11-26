@@ -1,4 +1,3 @@
-import javax.management.ValueExp;
 import java.util.Random;
 
 public class Cliente implements Runnable {
@@ -34,24 +33,20 @@ public class Cliente implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-               while(!getRecebeuPedido()) {
-                   esperaPedido();
-               }
+                while (!getRecebeuPedido()) {
+                    esperaPedido();
+                }
                 System.out.println("Sou o Cliente: #" + id + " Vai demorar " + getTempo() + " para consumir.");
-                        //wait(getTempo());
                 try {
                     consomePedido();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
-                // sair();
+            // sair();
 
-            }
         }
-
-
+    }
 
     public void setAguardando(boolean aguardando) {
         this.aguardando = aguardando;
@@ -60,7 +55,6 @@ public class Cliente implements Runnable {
     public boolean getAguardando() {
         return aguardando;
     }
-
 
     public boolean getPedido() {
         return fazPedido;
@@ -76,8 +70,6 @@ public class Cliente implements Runnable {
         return fazPedido = false;
     }
 
-
-
     public void calculaTempo() {
         Random random = new Random();
         int tempo = random.nextInt(1000);
@@ -88,11 +80,11 @@ public class Cliente implements Runnable {
         return tempo;
     }
 
-    public  void setRecebeuPedido(boolean recebeu) {
+    public void setRecebeuPedido(boolean recebeu) {
         this.recebeuPedido = recebeu;
     }
 
-    public  boolean getRecebeuPedido() {
+    public boolean getRecebeuPedido() {
         return recebeuPedido;
     }
 
@@ -100,22 +92,18 @@ public class Cliente implements Runnable {
         this.tempo = valor;
     }
 
-    public void esperaPedido(){
-      //  while(estabelecimento.)
+    public synchronized void esperaPedido() {
+        calculaTempo();
     }
 
     public synchronized boolean getFazPedido() {
         return fazPedido;
     }
 
-
-
-    public synchronized void consomePedido() throws InterruptedException { // IMplementar
+    public synchronized void consomePedido() throws InterruptedException {
         System.out.println("Cliente: " + Thread.currentThread().getId() + " comecou a consumir o pedido");
         wait(getTempo());
     }
-
-
 
     public int getId() {
         return id;
