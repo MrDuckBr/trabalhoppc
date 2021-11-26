@@ -4,32 +4,66 @@ public class Cliente implements Runnable{
 
     int id;
     long tempo;
-    boolean fazPedido;
+    boolean fazPedido,aguardandando;
+    public boolean teste;
     Estabelecimento estabelecimento;
     Thread t;
 
-    public Cliente(int id, Estabelecimento e) throws InterruptedException {
+
+
+    public Cliente(int id, Estabelecimento e)  {
         this.id = id;
         fazPedido = false;
+        aguardandando = false;
         this.estabelecimento = e;
-        t = new Thread(this);
+       t = new Thread(this);
+       teste = false;
         t.start();
 
 
     }
 
+
     @Override
     public void run(){
-        synchronized (estabelecimento){
-        System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+       // System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+        while(!estabelecimento.acabouRodadas()) {
+            if (fazPedido()) {
+                System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+                    while(isAguardandando()) {
+                        System.out.println("entrei aqui");
+                        try {
+                            estabelecimento.esperar(id);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                   // sair();
 
-        if(fazPedido()){
-            System.out.println("Cliente #"+Thread.currentThread().getId() +" irá pedir");
-
+            }
         }
-    }}
-    public  void esperar() throws InterruptedException {
-        t.wait();
+
+    }
+
+    public boolean isAguardandando() {
+        return aguardandando;
+    }
+
+    public void setAguardandando(boolean aguardandando) {
+        this.aguardandando = aguardandando;
+    }
+
+
+
+
+    public synchronized void esperar() throws InterruptedException {
+        System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+        wait();
+       //wait();
+    }
+    public synchronized void sair(){
+        System.out.println("Notifica amigo");
+        notify();
     }
 
     public boolean fazPedido(){
@@ -43,7 +77,7 @@ public class Cliente implements Runnable{
     }
 
     public  void esperaPedido() throws InterruptedException {
-        estabelecimento.esperaGarcom(this);
+     //   estabelecimento.esperaGarcom(this);
         System.out.println("Porra desse jeito a cerva vai chegar quente");
         fazPedido = true;
     }
