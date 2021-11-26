@@ -8,13 +8,14 @@ public class Cliente implements Runnable {
     public boolean teste;
     Estabelecimento estabelecimento;
     Thread t;
-    boolean recebeuPedido;
+    boolean recebeuPedido, finalizouPedido;
 
     public Cliente(int id, Estabelecimento e) {
         this.id = id;
         fazPedido = false;
         aguardando = false;
         recebeuPedido = false;
+        finalizouPedido = false;
         this.estabelecimento = e;
         t = new Thread(this);
         teste = false;
@@ -60,13 +61,19 @@ public class Cliente implements Runnable {
         return fazPedido;
     }
 
-    public boolean fazPedido() {
+    public synchronized boolean fazPedido() {
         if (!getFazPedido()) {
             Random random = new Random();
             int pedido = random.nextInt(5);
-            if (pedido <= 3)
+            if (pedido <= 3) {
+                estabelecimento.setClientesPediram(1);
                 return fazPedido = true;
+            }else{
+                System.out.println("NAO FAREI O PEDIDO: #" + id );
+                setFinalizouPedido(true);
+            }
         }
+
         return fazPedido = false;
     }
 
@@ -103,6 +110,24 @@ public class Cliente implements Runnable {
     public synchronized void consomePedido() throws InterruptedException {
         System.out.println("Cliente: " + Thread.currentThread().getId() + " comecou a consumir o pedido");
         wait(getTempo());
+        setFinalizouPedido(true);
+        System.out.println("Acabei de consumir o pedido");
+        estabelecimento.novaRodadaCliente();
+
+
+        /*Eu tenho que ficar disponivel*/
+
+    }
+
+    public boolean getFinalizouPedido(){
+        return finalizouPedido;
+    }
+
+    public void setFinalizouPedido(boolean b){
+        finalizouPedido = b;
+        if(b == true)
+            System.out.println("Finalizei o Pedido" + Thread.currentThread().getId());
+        estabelecimento.avisaQueFinalizou();
     }
 
     public int getId() {

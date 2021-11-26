@@ -4,7 +4,7 @@ public class Principal {
         int clientes, garcons, capacidade, rodadas;
         clientes = 10;
         garcons = 3;
-        capacidade = 1;
+        capacidade = 2;
         rodadas = 3;
 
         Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes, garcons, capacidade);

@@ -42,7 +42,9 @@ public class Garcom implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if(estabelecimento.getClientesPediram() == estabelecimento.getClientesAtendidos())
                 entregaPedidos();
+                System.out.println("Pediram " + estabelecimento.getClientesPediram() + " atendidos " + estabelecimento.getClientesAtendidos());
             }
         }
     }
@@ -65,11 +67,15 @@ public class Garcom implements Runnable {
     private void entregaPedidos() {
         listaCliente.clear();
         setDisponivel(false);
+        System.out.println("Garcom"+id+"entreguei todos os Pedidos");
     }
 
     private void registraPedidos() throws InterruptedException {
         System.out.println("Garcom " + id + " registrando pedidos");
         estabelecimento.recebeListPedidos(listaCliente);
+        nmrPedidos -= 1;
+        maximo = false;
+        listaCliente.clear();
     }
 
     private void recebeMaximoPedidos() {

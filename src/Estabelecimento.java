@@ -3,7 +3,7 @@ import java.util.concurrent.Semaphore;
 
 public class Estabelecimento {
 
-    int rodadasTotais, rodadas, clientes, garcons, capacidade, clientesAtendidos;
+    int rodadasTotais, rodadas, clientes, garcons, capacidade,clientesPediram,clientesAtendidos, clientesFinalizaram;
 
     ArrayList<Cliente> lstClientes;
     ArrayList<Garcom> lstGarcons;
@@ -18,6 +18,7 @@ public class Estabelecimento {
         this.capacidade = capacidade;
         this.semaforo = new Semaphore(2);
         clientesAtendidos = 0;
+        clientesFinalizaram = 0;
 
         lstClientes = new ArrayList<>();
 
@@ -47,6 +48,36 @@ public class Estabelecimento {
         // esperar();
 
         // if(rodadas <= rodadasTotais)
+    }
+
+    public synchronized void novaRodadaCliente() throws InterruptedException {
+        while(clientesFinalizaram != clientes){
+            System.out.println(clientesFinalizaram + " " + clientes);
+            wait();
+        }
+        if(clientesFinalizaram == clientes){
+            clientesFinalizaram = 0;
+            rodadas +=1;
+            lstClientesFezPedido.clear();
+
+            for (Garcom g:lstGarcons) {
+                g.setDisponivel(true);
+            }
+            for (Cliente c:lstClientes) {
+                c.setAguardando(false);
+                c.setRecebeuPedido(false);
+                c.setFinalizouPedido(false);
+            }
+            System.out.println("Comecou a rodada numero "+ rodadas );
+            notifyAll();
+
+
+        }
+
+    }
+
+    public synchronized void avisaQueFinalizou(){
+        clientesFinalizaram += 1;
     }
 
     public synchronized void esperar(int id) throws InterruptedException {
@@ -106,6 +137,14 @@ public class Estabelecimento {
 
     public int getClientes() {
         return clientes;
+    }
+
+    public int getClientesPediram(){
+        return clientesPediram;
+    }
+
+    public synchronized void setClientesPediram(int i){
+        clientesPediram += i;
     }
 }
 
