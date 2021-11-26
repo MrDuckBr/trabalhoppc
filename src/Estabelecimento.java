@@ -52,6 +52,8 @@ public class Estabelecimento {
         System.out.println("Sou o Cliente: (54)#" + Thread.currentThread().getId());
         while(!lstClientes.get(id).isAguardandando())
             wait();
+        notify();
+
 
 
     }
