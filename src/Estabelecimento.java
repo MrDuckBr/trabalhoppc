@@ -49,8 +49,11 @@ public class Estabelecimento {
     }
 
     public synchronized void esperar(int id) throws InterruptedException {
-            lstClientes.get(id).wait();
-            System.out.println("Sou o Cliente: (54)#" + Thread.currentThread().getId());
+        System.out.println("Sou o Cliente: (54)#" + Thread.currentThread().getId());
+        while(!lstClientes.get(id).isAguardandando())
+            wait();
+
+
     }
 
     public synchronized void alterar() throws InterruptedException{

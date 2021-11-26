@@ -30,13 +30,15 @@ public class Cliente implements Runnable{
         while(!estabelecimento.acabouRodadas()) {
             if (fazPedido()) {
                 System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+                try {
+                    estabelecimento.esperar(id);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                     while(isAguardandando()) {
-                        System.out.println("entrei aqui");
-                        try {
-                            estabelecimento.esperar(id);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+
+
                     }
                    // sair();
 
