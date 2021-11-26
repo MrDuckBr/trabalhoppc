@@ -1,3 +1,4 @@
+import javax.management.ValueExp;
 import java.util.Random;
 
 public class Cliente implements Runnable {
@@ -33,21 +34,24 @@ public class Cliente implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                while (!getAguardando()) {
-                    try {
-                        esperaPedido();
-                        System.out.println("Sou o Cliente: #" + id + " Vai demorar " + getTempo() + " para consumir.");
-                        wait(getTempo());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+               while(!getRecebeuPedido()) {
+                   esperaPedido();
+               }
+                System.out.println("Sou o Cliente: #" + id + " Vai demorar " + getTempo() + " para consumir.");
+                        //wait(getTempo());
+                try {
+                    consomePedido();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+            }
                 // sair();
 
             }
         }
 
-    }
+
 
     public void setAguardando(boolean aguardando) {
         this.aguardando = aguardando;
@@ -57,16 +61,6 @@ public class Cliente implements Runnable {
         return aguardando;
     }
 
-    public synchronized void esperar() throws InterruptedException {
-        System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
-        wait();
-        // wait();
-    }
-
-    public synchronized void sair() {
-        System.out.println("Notifica amigo");
-        notify();
-    }
 
     public boolean getPedido() {
         return fazPedido;
@@ -82,14 +76,7 @@ public class Cliente implements Runnable {
         return fazPedido = false;
     }
 
-    public void esperaPedido() throws InterruptedException {
-        while (!recebeuPedido) {
-            wait();
-        }
-        System.out.println("aqui");
-        notify();
-        calculaTempo();
-    }
+
 
     public void calculaTempo() {
         Random random = new Random();
@@ -101,11 +88,11 @@ public class Cliente implements Runnable {
         return tempo;
     }
 
-    public void setRecebeuPedido(boolean recebeu) {
+    public  void setRecebeuPedido(boolean recebeu) {
         this.recebeuPedido = recebeu;
     }
 
-    public boolean getRecebeuPedido() {
+    public  boolean getRecebeuPedido() {
         return recebeuPedido;
     }
 
@@ -113,28 +100,22 @@ public class Cliente implements Runnable {
         this.tempo = valor;
     }
 
+    public void esperaPedido(){
+      //  while(estabelecimento.)
+    }
+
     public synchronized boolean getFazPedido() {
         return fazPedido;
     }
 
-    public void recebePedido() {
-        System.out.println("Carai foi fazer a cerva ?");
-        Random random = new Random();
-        tempo = random.nextInt(3000); // Verificar se o mesmo está indo na copia ou no endereço
+
+
+    public synchronized void consomePedido() throws InterruptedException { // IMplementar
+        System.out.println("Cliente: " + Thread.currentThread().getId() + " comecou a consumir o pedido");
+        wait(getTempo());
     }
 
-    public void consomePedido() throws InterruptedException { // IMplementar
-        System.out.println("Vamo pedir mais uma então, se paga");
-        // 5this.wait(tempo);
-        // estabelecimento.esperaaiAmigao(tempo);
-        reset();
 
-    }
-
-    public void reset() {
-        tempo = 0;
-        fazPedido = false;
-    }
 
     public int getId() {
         return id;

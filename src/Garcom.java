@@ -36,7 +36,12 @@ public class Garcom implements Runnable {
         while (!estabelecimento.acabouRodadas()) {
             if (getDisponivel()) {
                 recebeMaximoPedidos();
-                registraPedidos();
+                imprimeClientesQueAtendera();
+                try {
+                    registraPedidos();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 entregaPedidos();
             }
         }
@@ -56,16 +61,16 @@ public class Garcom implements Runnable {
     private void entregaPedidos() {
     }
 
-    private synchronized void registraPedidos() {
-        try {
+    private  void registraPedidos() throws InterruptedException {
+
             System.out.println("Garcom " + id + " registrando pedidos");
-            wait(100);
+            //wait(100);
+            System.out.println(listaCliente.size());
             for (Cliente cliente : listaCliente) {
-                estabelecimento.registraPedido(cliente);
+               estabelecimento.registraPedido(cliente);
+               listaCliente.remove(cliente);
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void recebeMaximoPedidos() {
@@ -85,5 +90,15 @@ public class Garcom implements Runnable {
                 maximo = true;
             }
         }
+    }
+
+    public void imprimeClientesQueAtendera(){
+        System.out.print("O garcom: " + id + " ira atender os clientes [");
+        for (Cliente c:
+             listaCliente) {
+            System.out.print(c.getId() + " ");
+        }
+        System.out.println("]");
+
     }
 }

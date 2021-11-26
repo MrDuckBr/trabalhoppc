@@ -7,7 +7,6 @@ public class Estabelecimento {
     int rodadasTotais, rodadas, clientes, garcons, capacidade, clientesAtendidos;
 
     ArrayList<Cliente> lstClientes;
-    ArrayList<Thread> lstThreadsClientes;
     ArrayList<Garcom> lstGarcons;
     ArrayList<Cliente> lstClientesFezPedido;
 
@@ -18,7 +17,7 @@ public class Estabelecimento {
         this.garcons = garcons;
         this.rodadasTotais = rodadas;
         this.capacidade = capacidade;
-        this.semaforo = new Semaphore(1);
+        this.semaforo = new Semaphore(2);
         clientesAtendidos = 0;
 
         lstClientes = new ArrayList<>();
@@ -62,8 +61,7 @@ public class Estabelecimento {
     }
 
     public synchronized void alterar() throws InterruptedException {
-        // lstClientes.get(0).setAguardando(true);
-        System.out.println("Sou o Cliente: (54)#" + Thread.currentThread().getId());
+        wait();
     }
 
     public synchronized Cliente getCliente() {
@@ -80,8 +78,24 @@ public class Estabelecimento {
         return null;
     }
 
-    public void registraPedido(Cliente cliente) {
-        lstClientes.get(cliente.getId()).setRecebeuPedido(true);
+    public synchronized void registraPedido(Cliente cliente) throws InterruptedException {
+        semaforo.acquire();
+        lstClientes.get(cliente.getId()).calculaTempo();
+        System.out.println("O tempo" + lstClientes.get(cliente.getId()).getTempo());
+
+    }
+
+    public synchronized void verificaPedido(int id) throws InterruptedException {
+        for (Cliente c: lstClientesFezPedido) {
+            if(lstClientes.get(id).getId() == c.getId()){
+                Cliente cli = lstClientes.get(id);
+                cli.setRecebeuPedido(c.getRecebeuPedido());
+                cli.calculaTempo();
+                wait(cli.getTempo());
+
+
+            }
+        }
     }
 
     public synchronized int getClientesAtendidos() {
