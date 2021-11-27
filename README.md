@@ -1,4 +1,5 @@
 
+
 ## Descrição do Funcionamento do Algoritmo
 
 O algoritmo em questão foi desenvolvido em java, linguagem essa que apresenta suporte a Threads e também conceitos de semáforos. No algoritmo contém quatro classes, onde a classe Principal é responsável exclusivamente por criar o objeto Estabelecimento este que de forma geral é responsável por toda a execução do código.
@@ -21,3 +22,4 @@ A compilação do programa é feita utilizando um compilador java (de preferênc
 Em seguida, rodar o algoritmo com os parâmetros.
 
 `java Principal 1 2 3 4`
+
