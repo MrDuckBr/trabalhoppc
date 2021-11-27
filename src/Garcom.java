@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class Garcom implements Runnable {
 
-
     boolean disponivel;
     int id, capacidade, nmrPedidos;
     ArrayList<Cliente> listaCliente;
@@ -45,7 +44,6 @@ public class Garcom implements Runnable {
         return disponivel;
     }
 
-
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
@@ -53,7 +51,7 @@ public class Garcom implements Runnable {
     private void entregaPedidos() {
         listaCliente.clear();
         setDisponivel(false);
-        System.out.println("Garcom"+id+" entreguei todos os Pedidos");
+        System.out.println("Garcom" + id + " entreguei todos os Pedidos");
     }
 
     private void registraPedidos() throws InterruptedException {
@@ -82,6 +80,5 @@ public class Garcom implements Runnable {
             }
         }
     }
-
 
 }

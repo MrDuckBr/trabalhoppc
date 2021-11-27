@@ -1,10 +1,10 @@
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public class Estabelecimento {
 
-    int rodadasTotais, rodadas, clientes, garcons, capacidade,clientesPediram,clientesAtendidos, clientesFinalizaram, finalizou;
+    int rodadasTotais, rodadas, clientes, garcons, capacidade, clientesPediram, clientesAtendidos, clientesFinalizaram,
+            finalizou;
 
     ArrayList<Cliente> lstClientes;
     ArrayList<Garcom> lstGarcons;
@@ -20,7 +20,7 @@ public class Estabelecimento {
         this.semaforo = new Semaphore(2);
         clientesAtendidos = 0;
         clientesFinalizaram = 0;
-        finalizou= 0;
+        finalizou = 0;
 
         lstClientes = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class Estabelecimento {
         return false;
     }
 
-    public void comecar()  {
+    public void comecar() {
         System.out.println("Começou o atendimento de rodadas free");
         System.out.println("-------------------------------------------");
         for (int i = 0; i < garcons; i++) {
@@ -50,27 +50,27 @@ public class Estabelecimento {
 
     public synchronized void novaRodadaCliente() throws InterruptedException {
         finalizou++;
-        while(clientesFinalizaram != clientes){
+        while (clientesFinalizaram != clientes) {
 
             wait();
             semaforo.acquire();
         }
-        if(clientesFinalizaram == clientes){
+        if (clientesFinalizaram == clientes) {
             semaforo.release();
             clientesFinalizaram = 0;
 
             lstClientesFezPedido.clear();
 
-            for (Garcom g:lstGarcons) {
+            for (Garcom g : lstGarcons) {
                 g.setDisponivel(true);
             }
-            for (Cliente c:lstClientes) {
+            for (Cliente c : lstClientes) {
                 c.setAguardando(false);
                 c.setRecebeuPedido(false);
                 c.setFinalizouPedido(false);
             }
 
-            if(finalizou == clientes){
+            if (finalizou == clientes) {
                 finalizou = 0;
                 rodadas++;
                 System.out.println("Nova Rodada" + rodadas);
@@ -79,12 +79,9 @@ public class Estabelecimento {
             clientesFinalizaram = clientes;
         }
 
-
     }
 
-
-
-    public synchronized void avisaQueFinalizou(){
+    public synchronized void avisaQueFinalizou() {
         clientesFinalizaram += 1;
     }
 
@@ -147,11 +144,11 @@ public class Estabelecimento {
         return clientes;
     }
 
-    public int getClientesPediram(){
+    public int getClientesPediram() {
         return clientesPediram;
     }
 
-    public synchronized void setClientesPediram(int i){
+    public synchronized void setClientesPediram(int i) {
         clientesPediram += i;
     }
 }

@@ -46,7 +46,6 @@ public class Cliente implements Runnable {
                 }
             }
 
-
         }
     }
 
@@ -69,8 +68,8 @@ public class Cliente implements Runnable {
             if (pedido <= 3) {
                 estabelecimento.setClientesPediram(1);
                 return fazPedido = true;
-            }else{
-                System.out.println("Sou o cliente: #" + id + " e não farei o pedido" );
+            } else {
+                System.out.println("Sou o cliente: #" + id + " e não farei o pedido");
                 setFinalizouPedido(true);
             }
         }
@@ -116,13 +115,13 @@ public class Cliente implements Runnable {
 
     }
 
-    public boolean getFinalizouPedido(){
+    public boolean getFinalizouPedido() {
         return finalizouPedido;
     }
 
-    public void setFinalizouPedido(boolean b){
+    public void setFinalizouPedido(boolean b) {
         finalizouPedido = b;
-        if(b == true)
+        if (b == true)
             System.out.println("Finalizei o Pedido" + Thread.currentThread().getId());
         estabelecimento.avisaQueFinalizou();
     }

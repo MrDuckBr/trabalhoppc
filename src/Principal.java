@@ -2,10 +2,10 @@ public class Principal {
     public static void main(String[] args) throws InterruptedException {
 
         int clientes, garcons, capacidade, rodadas;
-        clientes = 3;
-        garcons = 3;
-        capacidade = 1;
-        rodadas = 3;
+        clientes = Integer.parseInt(args[0]);
+        garcons = Integer.parseInt(args[1]);
+        capacidade = Integer.parseInt(args[2]);
+        rodadas = Integer.parseInt(args[3]);
 
         Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes, garcons, capacidade);
         estabelecimento.comecar();
