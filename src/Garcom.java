@@ -1,84 +1,84 @@
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.Random;
 
-public class Garcom extends Thread {
+public class Garcom implements Runnable {
 
-    float tempoOcupado;
     boolean disponivel;
-    int id,capacidade, nmrPedidos;
+    int id, capacidade, nmrPedidos;
     ArrayList<Cliente> listaCliente;
-
+    Thread t;
+    boolean maximo;
 
     Estabelecimento estabelecimento;
 
-
-    public Garcom(int id, float tempoOcupado, int capacidade,Estabelecimento e){
-        this.id= id;
-        this.tempoOcupado = tempoOcupado;
+    public Garcom(int id, int capacidade, Estabelecimento e) {
+        this.id = id;
         this.capacidade = capacidade;
         listaCliente = new ArrayList<>();
-
-
-        estabelecimento = e;
-        //Estaticas-----------------
+        this.estabelecimento = e;
         nmrPedidos = 0;
-        disponivel = false;
-        //-----------------------------------
+        disponivel = true;
+        maximo = false;
+        t = new Thread(this);
+        t.start();
+
     }
 
+    @Override
     public void run() {
-        try {
-            while (verificaDisponibilidadePedidos() && estabelecimento.verificaClientesQueFaraoPedidos() != null) { // Pode
+        while (!estabelecimento.acabouRodadas()) {
+            if (getDisponivel()) {
+                recebeMaximoPedidos();
+                try {
+                    registraPedidos();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                    if (addClienteLista(estabelecimento.verificaClientesQueFaraoPedidos())) {
-                        registraPedidos();
-                    } else {
-                        break;
+                entregaPedidos();
 
+            }
+        }
+    }
+
+    public boolean getDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    }
+
+    private void entregaPedidos() {
+        listaCliente.clear();
+        setDisponivel(false);
+        System.out.println("Garcom" + id + " entreguei todos os Pedidos");
+    }
+
+    private void registraPedidos() throws InterruptedException {
+
+        System.out.println("Garcom " + id + "  registrando pedidos");
+        estabelecimento.recebeListPedidos(listaCliente);
+
+        listaCliente.clear();
+    }
+
+    private void recebeMaximoPedidos() {
+        while (!maximo) {
+            if (estabelecimento.getClientesAtendidos() != estabelecimento.getClientes()) {
+                if (nmrPedidos < capacidade) {
+                    Cliente c = estabelecimento.getCliente();
+                    if (c != null) {
+                        nmrPedidos++;
+                        listaCliente.add(c);
+                        System.out.println("Garcom " + id + " recebeu um pedido de " + c.getId());
                     }
+                } else {
+                    maximo = true;
+                }
+            } else {
+                maximo = true;
             }
-            if(!verificaDisponibilidadePedidos() || estabelecimento.verificaClientesQueFaraoPedidos() == null){
-                System.out.println("Passei aqui meu consagra");
-                estabelecimento.liberaoamigao();
-
-            }
-        }catch (InterruptedException e){
-            e.printStackTrace();
         }
-    }
-
-    public boolean getDisponibilidade(){
-        return  disponivel;
-    }
-
-
-    public boolean verificaDisponibilidadePedidos(){
-        disponivel = (nmrPedidos <= capacidade) ? true : false;
-            return disponivel;
-    }
-
-    public void registraPedidos(){
-        if(verificaDisponibilidadePedidos()){
-           /* nmrPedidos += 1;
-            Random random = new Random();
-            listaCliente.get(listaCliente.size()).setEsperaPedido(random.nextInt(3000));*/
-           //Verificar se o mesmo está indo na copia ou no endereço
-
-        }
-
-    }
-    public void entregaPedidos(){
-        //zerar os pedidos ?
-    }
-
-
-    public boolean addClienteLista(Cliente c){
-        if(c != null) {
-            listaCliente.add(c);
-            return true;
-        }
-        return false;
     }
 
 }

@@ -1,72 +1,133 @@
 import java.util.Random;
 
-public class Cliente extends Thread{
+public class Cliente implements Runnable {
 
     int id;
-    long tempo;
-    boolean fazPedido;
+    int tempo;
+    boolean fazPedido, aguardando;
+    public boolean teste;
     Estabelecimento estabelecimento;
+    Thread t;
+    boolean recebeuPedido, finalizouPedido;
 
-    public Cliente(int id, long tempo, Estabelecimento e){
+    public Cliente(int id, Estabelecimento e) {
         this.id = id;
-        this.tempo = tempo;
         fazPedido = false;
+        aguardando = false;
+        recebeuPedido = false;
+        finalizouPedido = false;
         this.estabelecimento = e;
+        t = new Thread(this);
+        teste = false;
+        t.start();
+
     }
 
-    public void run(){
-        try {
-            if(fazPedido()){
-                esperaPedido();
-                 recebePedido();
-                consomePedido();
+    @Override
+    public void run() {
+        // System.out.println("Sou o Cliente: #" + Thread.currentThread().getId());
+        while (!estabelecimento.acabouRodadas()) {
+            if (fazPedido()) {
+                System.out.println("Sou o Cliente: #" + id + " e vou fazer um pedido");
+                try {
+                    estabelecimento.esperar(id);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                while (!getRecebeuPedido()) {
+
+                    esperaPedido();
+                }
+                System.out.println("Sou o Cliente: #" + id + " vou demorar " + getTempo() + " para consumir.");
+                try {
+                    consomePedido();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
         }
     }
 
-    public boolean fazPedido(){
-        System.out.println("Manda um pingadão ai meu consagrado");
-        if(!getFazPedido()){
-            Random  random = new Random();
+    public void setAguardando(boolean aguardando) {
+        this.aguardando = aguardando;
+    }
+
+    public boolean getAguardando() {
+        return aguardando;
+    }
+
+    public boolean getPedido() {
+        return fazPedido;
+    }
+
+    public synchronized boolean fazPedido() {
+        if (!getFazPedido()) {
+            Random random = new Random();
             int pedido = random.nextInt(5);
-            if(pedido <= 3) return  true;
+            if (pedido <= 3) {
+                estabelecimento.setClientesPediram(1);
+                return fazPedido = true;
+            } else {
+                System.out.println("Sou o cliente: #" + id + " e não farei o pedido");
+                setFinalizouPedido(true);
+            }
         }
-        return false;
+
+        return fazPedido = false;
     }
 
-    public  void esperaPedido() throws InterruptedException {
-        estabelecimento.esperaGarcom(this);
-        System.out.println("Porra desse jeito a cerva vai chegar quente");
-        fazPedido = true;
+    public void calculaTempo() {
+        Random random = new Random();
+        int tempo = random.nextInt(1000);
+        this.tempo = tempo;
     }
-    public  void setEsperaPedido(int valor){
+
+    public int getTempo() {
+        return tempo;
+    }
+
+    public void setRecebeuPedido(boolean recebeu) {
+        this.recebeuPedido = recebeu;
+    }
+
+    public boolean getRecebeuPedido() {
+        return recebeuPedido;
+    }
+
+    public void setEsperaPedido(int valor) {
         this.tempo = valor;
     }
 
-    public synchronized boolean getFazPedido(){
-        return  fazPedido;
+    public synchronized void esperaPedido() {
+        calculaTempo();
     }
 
-    public void recebePedido(){
-        System.out.println("Carai foi fazer a cerva ?");
-        Random random = new Random();
-        tempo = random.nextInt(3000);        //Verificar se o mesmo está indo na copia ou no endereço
+    public synchronized boolean getFazPedido() {
+        return fazPedido;
     }
 
-
-    public void consomePedido() throws InterruptedException { // IMplementar
-        System.out.println("Vamo pedir mais uma então, se paga");
-        //5this.wait(tempo);
-        //estabelecimento.esperaaiAmigao(tempo);
-        reset();
-
+    public synchronized void consomePedido() throws InterruptedException {
+        System.out.println("Cliente: " + Thread.currentThread().getId() + " comecou a consumir o pedido");
+        wait(getTempo());
+        setFinalizouPedido(true);
+        estabelecimento.novaRodadaCliente();
 
     }
 
-    public void reset(){
-        tempo = 0;
-        fazPedido = false;
+    public boolean getFinalizouPedido() {
+        return finalizouPedido;
     }
+
+    public void setFinalizouPedido(boolean b) {
+        finalizouPedido = b;
+        if (b == true)
+            System.out.println("Finalizei o Pedido" + Thread.currentThread().getId());
+        estabelecimento.avisaQueFinalizou();
+    }
+
+    public int getId() {
+        return id;
+    }
+
 }

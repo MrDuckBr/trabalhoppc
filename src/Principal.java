@@ -1,5 +1,5 @@
 public class Principal {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         int clientes, garcons, capacidade, rodadas;
         clientes = Integer.parseInt(args[0]);
@@ -7,9 +7,7 @@ public class Principal {
         capacidade = Integer.parseInt(args[2]);
         rodadas = Integer.parseInt(args[3]);
 
-        Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes,garcons, capacidade);
+        Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes, garcons, capacidade);
         estabelecimento.comecar();
-
-
     }
 }
