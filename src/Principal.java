@@ -2,9 +2,9 @@ public class Principal {
     public static void main(String[] args) throws InterruptedException {
 
         int clientes, garcons, capacidade, rodadas;
-        clientes = 10;
+        clientes = 3;
         garcons = 3;
-        capacidade = 2;
+        capacidade = 1;
         rodadas = 3;
 
         Estabelecimento estabelecimento = new Estabelecimento(rodadas, clientes, garcons, capacidade);

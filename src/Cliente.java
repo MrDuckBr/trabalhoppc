@@ -35,16 +35,17 @@ public class Cliente implements Runnable {
                     e.printStackTrace();
                 }
                 while (!getRecebeuPedido()) {
+
                     esperaPedido();
                 }
-                System.out.println("Sou o Cliente: #" + id + " Vai demorar " + getTempo() + " para consumir.");
+                System.out.println("Sou o Cliente: #" + id + " vou demorar " + getTempo() + " para consumir.");
                 try {
                     consomePedido();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            // sair();
+
 
         }
     }
@@ -69,7 +70,7 @@ public class Cliente implements Runnable {
                 estabelecimento.setClientesPediram(1);
                 return fazPedido = true;
             }else{
-                System.out.println("NAO FAREI O PEDIDO: #" + id );
+                System.out.println("Sou o cliente: #" + id + " e não farei o pedido" );
                 setFinalizouPedido(true);
             }
         }
@@ -111,11 +112,7 @@ public class Cliente implements Runnable {
         System.out.println("Cliente: " + Thread.currentThread().getId() + " comecou a consumir o pedido");
         wait(getTempo());
         setFinalizouPedido(true);
-        System.out.println("Acabei de consumir o pedido");
         estabelecimento.novaRodadaCliente();
-
-
-        /*Eu tenho que ficar disponivel*/
 
     }
 

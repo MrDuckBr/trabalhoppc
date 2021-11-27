@@ -1,9 +1,10 @@
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public class Estabelecimento {
 
-    int rodadasTotais, rodadas, clientes, garcons, capacidade,clientesPediram,clientesAtendidos, clientesFinalizaram;
+    int rodadasTotais, rodadas, clientes, garcons, capacidade,clientesPediram,clientesAtendidos, clientesFinalizaram, finalizou;
 
     ArrayList<Cliente> lstClientes;
     ArrayList<Garcom> lstGarcons;
@@ -19,6 +20,7 @@ public class Estabelecimento {
         this.semaforo = new Semaphore(2);
         clientesAtendidos = 0;
         clientesFinalizaram = 0;
+        finalizou= 0;
 
         lstClientes = new ArrayList<>();
 
@@ -33,30 +35,28 @@ public class Estabelecimento {
         return false;
     }
 
-    public void comecar() throws InterruptedException {
+    public void comecar()  {
         System.out.println("Começou o atendimento de rodadas free");
+        System.out.println("-------------------------------------------");
         for (int i = 0; i < garcons; i++) {
             Garcom garcom = new Garcom(i, capacidade, this);
             lstGarcons.add(garcom);
         }
-
         for (int i = 0; i < clientes; ++i) {
             Cliente cliente = new Cliente(i, this);
-            // System.out.println("Sou o Cliente: #36 " + Thread.currentThread().getId());
             lstClientes.add(cliente);
-            // System.out.println("Sou o Cliente: #37 " + Thread.currentThread().getId());
         }
-        // esperar();
-
-        // if(rodadas <= rodadasTotais)
     }
 
     public synchronized void novaRodadaCliente() throws InterruptedException {
+        finalizou++;
         while(clientesFinalizaram != clientes){
-            System.out.println(clientesFinalizaram + " " + clientes);
+
             wait();
+            semaforo.acquire();
         }
         if(clientesFinalizaram == clientes){
+            semaforo.release();
             clientesFinalizaram = 0;
 
             lstClientesFezPedido.clear();
@@ -70,17 +70,19 @@ public class Estabelecimento {
                 c.setFinalizouPedido(false);
             }
 
-            if(lstClientes.get(0).getId() == 0) {
-                rodadas += 1;
-                System.out.println("Nova Rodada Iniciada, rodada de Numero: " + rodadas);
+            if(finalizou == clientes){
+                finalizou = 0;
+                rodadas++;
+                System.out.println("Nova Rodada" + rodadas);
             }
-
             notifyAll();
-
+            clientesFinalizaram = clientes;
         }
 
 
     }
+
+
 
     public synchronized void avisaQueFinalizou(){
         clientesFinalizaram += 1;
@@ -118,7 +120,7 @@ public class Estabelecimento {
         System.out.println("O tempo " + lstClientes.get(cliente.getId()).getTempo());
     }
 
-    public void recebeListPedidos(ArrayList<Cliente> lstPedidos) {
+    public synchronized void recebeListPedidos(ArrayList<Cliente> lstPedidos) {
         System.out.println("Recebeu a lista de pedidos");
         for (Cliente cliente : lstPedidos) {
             cliente.setRecebeuPedido(true);
@@ -153,11 +155,3 @@ public class Estabelecimento {
         clientesPediram += i;
     }
 }
-
-/*
- * esperaPedido(); recebePedido(); consomePedido();
- *
- */
-
-// Garcom = recebeMaximoPedido,RegistraPedido,entregaPedido
-// Cliente = fazPedido, esperaPedido, rebebePedido,ConsomePedido
