@@ -70,10 +70,10 @@ public class Estabelecimento {
                 c.setFinalizouPedido(false);
             }
 
-//            if(lstClientes.get(0).getId() == 0) {
-//                rodadas += 1;
-//                System.out.println("Nova Rodada Iniciada, rodada de Numero: " + rodadas);
-//            }
+            if(lstClientes.get(0).getId() == 0) {
+                rodadas += 1;
+                System.out.println("Nova Rodada Iniciada, rodada de Numero: " + rodadas);
+            }
 
             notifyAll();
 
